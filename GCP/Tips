@@ -1,0 +1,38 @@
+ここにGCPで使用したコマンドを表記していくよー
+
+1．大きい被圧縮データ（展開後1GB~）の取り扱い
+数GBを超えるファイルは、7zip(gzip,zipなど)の形式のままKaggleから直接ダウンロードする。
+ダウンロードしたファイルをまたそのままGCPのStorageへアップロードする。※ここまでドラック&ドロップのみ
+なお、具体例としてStorageのパスを gs://tkg_kaggle_corporacion/input/ とし、input直下にアップロードしたものとする。
+Compute EngineにてVMインスタンス（以下VM）を立ち上げる。
+対象のファイルをコピーするためのフォルダを作成する。※下記は具体例なので、フォルダ名は適宜変更すること
+
+$ cd ~
+$ mkdir Kaggle_corporacion
+$ cd ~/Kaggle_corporacion
+$ mkdir input
+$ cd ~/Kaggle_corporacion/input
+
+ファイルを保存する場所まできたら、Storageからデータをコピーする。
+
+$ gsutil -m cp gs://tkg_kaggle_corporacion/input/* ~/Kaggle_corporacion/input/
+※ -m : 処理が早くなるおまじない。詳細は知らない。
+
+VMの該当フォルダ直下にコピーされているか確認する。
+VMに7z解凍用のライブラリをダウンロードする。
+
+[7zipの場合]
+$ sudo apt-get install p7zip-full
+$ 7z x ***.7z
+※ *を使用して一括解凍はできない模様。今回はひとつずつ解凍したよ。
+$ rm *.7z
+※ これは一括削除できるよ。
+
+解凍が済んだファイルをStorageへ送り返すよ。
+
+$ gsutil -m cp ~/Kaggle_corporacion/input/* gs://tkg_kaggle_corporacion/input/
+$ rm *.*
+※ ファイルの転送は先の方法と同じだよ
+※ VMのデータを全消し
+
+以上。
