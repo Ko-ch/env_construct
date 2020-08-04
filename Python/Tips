@@ -1,0 +1,21 @@
+メモリの開放方法
+> import gc
+> hoge = 10000000
+> del hoge
+> gc.collect()
+delで変数の削除を実施し、gc.collect()でメモリの開放を実施してくれる。らしい。
+
+変数のメモリ使用量の確認方法1
+> hoge.__sizeof__()
+
+変数のメモリ使用量の確認方法2
+> import sys
+> sys.getsizeof(hoge)
+
+変数のメモリ使用量の確認方法3
+> from memory_profiler import profile
+> import numpy as np
+> @profile()
+> def test():
+>     hoge = 10000000
+> test()
