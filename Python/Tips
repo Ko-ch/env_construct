@@ -1,21 +1,55 @@
 メモリの開放方法
-> import gc
-> hoge = 10000000
-> del hoge
-> gc.collect()
+
+import gc
+hoge = 10000000
+del hoge
+gc.collect()
+
 delで変数の削除を実施し、gc.collect()でメモリの開放を実施してくれる。らしい。
 
 変数のメモリ使用量の確認方法1
-> hoge.__sizeof__()
+
+hoge.__sizeof__()
 
 変数のメモリ使用量の確認方法2
-> import sys
-> sys.getsizeof(hoge)
+
+import sys
+sys.getsizeof(hoge)
+
 
 変数のメモリ使用量の確認方法3
-> from memory_profiler import profile
-> import numpy as np
-> @profile()
-> def test():
->     hoge = 10000000
-> test()
+
+from memory_profiler import profile
+import numpy as np
+@profile()
+def test():
+    hoge = 10000000
+test()
+
+
+ユニークな文字列で分類される列を,0以上の数値に置き換えてくれる。
+文字列を扱えない機械学習のときに使用する。
+以下の場合は、列名を指定して変換する場合。
+
+# Categorical features with Binary encode (0 or 1: two categories)
+for bin_feature in ['CODE_GENDER', 'FLAG_OWN_CAR', 'FLAG_OWN_REALTY']:
+    df[bin_feature], uniques = pd.factorize(df[bin_feature])
+
+以下の場合は、すべての列を変換する場合。
+
+df.apply(lambda x: pd.factorize(x)[0])
+
+
+データの各列の中にnanが入っている列名のみリストにする方法
+欠損値の取り扱いをするときに有用
+リスト内でforループを実施し、列名を取得している
+
+categorical_columns = [col for col in df.columns if df[col].isnull().any() == True]
+print("Dataframe has {} nan-columns. Total columns is {}".format(len(categorical_columns),len(df.columns)))
+
+
+データフレームの中身を追加・変更するために使う、便利なmap関数
+
+train['next_year_Age'] = train['Age'].apply(lambda x:x+1)
+train['Age'] = train['Age'].apply(lambda x:x+1)
+train["Sex_Number"] = train["Sex"].map({"female":0, "male":1})
